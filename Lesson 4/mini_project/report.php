@@ -30,6 +30,12 @@
                 border: 1px solid #dee2e6;
             }
         }
+
+        .total-amounts {
+            background-color: lightgreen;
+            padding: 10px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -47,47 +53,54 @@
                         <th>Mpesa Code</th>
                         <th>Deposited Amount</th>
                         <th>Withdrawal Amount</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Loop through your users data to generate table rows -->
                     <?php
                     include_once "database-config.php";
-
                     $sql = "SELECT * FROM users";
                     $result = $database_connection->query($sql);
+                    
+                    $totalDeposits = 0;
+                    $totalWithdrawals = 0;
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $nationalID = $row['nationalID'];
-                            $firstName = $row['firstName'];
-                            $lastName = $row['lastName'];
-                            $phoneNumber = $row['phoneNumber'];
-                            $mpesaCode = $row['mpesaCode'];
-                            $depositedAmount = $row['depositedAmount'];
-                            $withdrawalAmount = $row['withdrawalAmount'];
-                            ?>
-                            <tr>
-                                <td><?php echo $nationalID; ?></td>
-                                <td><?php echo $firstName; ?></td>
-                                <td><?php echo $lastName; ?></td>
-                                <td><?php echo $phoneNumber; ?></td>
-                                <td><?php echo $mpesaCode; ?></td>
-                                <td><?php echo $depositedAmount; ?></td>
-                                <td><?php echo $withdrawalAmount; ?></td>
-                              
-                            </tr>
-                            <!-- Edit User Modal -->
-                            <!-- Delete User Modal -->
-                            <?php
+                            echo "<tr>";
+                            echo "<td>" . $row['nationalID'] . "</td>";
+                            echo "<td>" . $row['firstName'] . "</td>";
+                            echo "<td>" . $row['lastName'] . "</td>";
+                            echo "<td>" . $row['phoneNumber'] . "</td>";
+                            echo "<td>" . $row['mpesaCode'] . "</td>";
+                            echo "<td>" . $row['depositedAmount'] . "</td>";
+                            echo "<td>" . $row['withdrawalAmount'] . "</td>";
+                            echo "</tr>";
+
+                            $totalDeposits += $row['depositedAmount'];
+                            $totalWithdrawals += $row['withdrawalAmount'];
                         }
                     } else {
-                        echo "<tr><td colspan='8'>No users found</td></tr>";
+                        echo "<tr><td colspan='7'>No users found</td></tr>";
                     }
                     ?>
                 </tbody>
             </table>
+            <div class="total-amounts">
+                <table class="table">
+                    <tr>
+                        <th>Total Deposits:</th>
+                        <td><?php echo $totalDeposits; ?></td>
+                    </tr>
+                    <tr>
+                        <th>Total Withdrawals:</th>
+                        <td><?php echo $totalWithdrawals; ?></td>
+                    </tr>
+                </table>
+            </div>
+            <form action="generate.php" method="post">
+                <button type="submit" name="generate_pdf" class="btn btn-primary">Download PDF</button>
+            </form>
         </div>
     </div>
 
